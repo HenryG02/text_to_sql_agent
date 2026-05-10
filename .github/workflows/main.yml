@@ -28,7 +28,7 @@ jobs:
       - name: Install dependencies (requirements)
         run: |
           python -m pip install --upgrade pip
-          pip install pandas supabase
+          pip install pandas supabase numpy
 
       # Step 4: Run Python script
       - name: Execute ETL Python script
