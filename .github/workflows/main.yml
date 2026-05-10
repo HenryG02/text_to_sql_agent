@@ -1,0 +1,39 @@
+name: ETL Pipeline
+
+# 1. THE TRIGGER (When this action will be run?)
+on:
+  push:
+    paths:
+      - 'data/**.txt' # Only runs if there's updates on .txt files in the data folder
+  workflow_dispatch: # This command creates a button in GitHub, allowing to run the action manually
+
+# 2. THE JOBS (What will be done?)
+jobs:
+  run-etl:
+    runs-on: ubuntu-latest # We'll use Ubuntu in the GitHub VM
+
+    steps:
+      # Step 1: Clone repository into virtual machine
+      - name: Download repo (Checkout)
+        uses: actions/checkout@v4
+
+      # Step 2: Install and configure Python in the VM
+      - name: Configure Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip' # Implements cache for the dependencies to run faster
+
+      # Step 3: Install necessary Python libraries
+      - name: Install dependencies (requirements)
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas supabase
+
+      # Step 4: Run Python script
+      - name: Execute ETL Python script
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: |
+          python scripts/populate_db.py
