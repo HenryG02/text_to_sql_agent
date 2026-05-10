@@ -1,7 +1,6 @@
+import glob
 import os
 import pandas as pd
-import numpy as np
-from dotenv import load_dotenv
 from supabase import create_client, Client
 
 # Loading environment variables
