@@ -4,8 +4,6 @@ import pandas as pd
 from supabase import create_client, Client
 
 # Loading environment variables
-load_dotenv()
-
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
@@ -83,11 +81,13 @@ def load_to_supabase(df: pd.DataFrame, table_name: str):
 
 
 if __name__ == "__main__":
-    DATA_PATH = "data/30_times.txt"
+    folder_path = "data/*.txt"
+    files = glob.glob(folder_path)
+    latest_file = max(files, key=os.path.getctime)
     TABLE_NAME = "solves"
 
     try:
-        raw_df = extract_data(DATA_PATH)
+        raw_df = extract_data(latest_file)
         processed_df = transform_data(raw_df)
         load_to_supabase(processed_df, TABLE_NAME)
     except Exception as e:
